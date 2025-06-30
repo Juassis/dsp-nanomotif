@@ -74,15 +74,22 @@ Fly (metaFlye for metagenomics)
 
 The methylation pileup file indicates how many mapped reads at each position show evidence of methylation. To generate this file:
 
-Map reads (with methylation calls) to the assembly.
-Use modkit pileup to create the pileup.
+- Map reads (with methylation calls) to the assembly.
+- Use modkit pileup to create the pileup.
 
 ### Merging the Bam files with the modification
 
+First, we need to merge all the BAM files from each barcode using the following script:
+
 [04_merging-bams.sh](https://github.com/Juassis/dsp-nanomotif/blob/main/01_Documentation/04_merging-bams.sh)
 
+### Pileup
 
 
+[07_run_bins.sh](https://github.com/Juassis/dsp-nanomotif/blob/main/01_Documentation/07_run_bins.sh)
+
+
+[06_pre-run-pileup.sh](https://github.com/Juassis/dsp-nanomotif/blob/main/01_Documentation/06_pre-run-pileup.sh)
 
 ```{shell }
 MODCALLS="/home/azureuser/nanomotif/02_Working/Merging/barcode61/ALL_bam61.sorted.bam"
@@ -137,8 +144,12 @@ grep ">" "$BINFILENAME" | sed 's/>//' | awk -v bin="$BINNAME" '{print $1 "\t" bi
 conda activate nanomotif2
 nanomotif motif_discovery /home/azureuser/nanomotif/02_Working/barcode61/assembly.fasta pileup.bed contig_bin.tsv --out test2
 <br>
-<!-- ----------------------- Do not edit above this ----------------------- -->
 
+
+
+
+
+[08_run_nanomotif_loop.sh](https://github.com/Juassis/dsp-nanomotif/blob/main/01_Documentation/08_run_nanomotif_loop.sh)
 # Strategy
 
 Extracted DNA was sequenced on an Oxford Nanopore MinION device using a 10.4.1 flowcell and the SQK-RBK114-96 rapid barcoding kit with library preparation modifications according to (1). 
