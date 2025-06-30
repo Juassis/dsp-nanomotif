@@ -1,1 +1,163 @@
-# dsp-nanomotif
+# Project goals
+
+The methylation pattern of DNA methyltransferases will be identified in isolates and metagenomics through nanopore sequencing and the use of [Nanomotif](#nanomotif). Proper expression and folding will be ensured through the use of a dual-reporter system2, prior to functional testing
+
+## Nanomotif
+
+Nanomotif is a Python package designed to explore methylation in prokaryotic genomes using Nanopore sequencing. Nanomotif is a fast, scalable, and sensitive tool for identification and utilization of methylation motifs in monocultures and metagenomic samples. Nanomotif offers de novo methylated motif identification, metagenomic bin contamination detection, bin association of unbinned contigs, and linking of MTase genes to methylation motifs.
+
+[NanoMotif](https://nanomotif.readthedocs.io/en/latest/)
+
+# Methodos
+
+Extracted DNA was sequenced on an Oxford Nanopore MinION device using a 10.4.1 flowcell and the SQK-RBK114-96 rapid barcoding kit with library preparation modifications according to (1). The raw data was basecalled and demultiplexed utilizing an A100 GPU running standalone Dorado (v0.9.1) and the super accuracy basecalling model (dna_r10.4.1_e8.2_400bps_sup@v5.0.0) with detection of the following modifications: 4mC_5mC,6mA. 
+ 
+## Geting the data
+The data has been generate in two different sequencing: run1 we ran all the samples we had, and some of the sequences did not have a good enough coverage, so we loaded those again, and ran it which is run3 (something was wrong in "run2" and it was terminated early).
+
+### Data location
+
+**O: drive**
+```{ }
+O:\Scientific dep\009_Experimental data\034_Nanopore\Sheila
+```
+**Azure**
+```{ }
+/mnt/nanomotif/Sharing/Merged
+```
+
+## Merging the runnings: run1 and run 3
+
+Run the script: 03_merge-barcode-folders.sh to merge run1 and run3.
+
+## Quality Control (QC)
+
+For QC analysis run the scripts:
+01_check-reads-length.sh
+02_count-files.sh
+
+[Nanoplot](https://github.com/wdecoster/NanoPlot)
+
+
+```{ }
+pip install NanoPlot
+NanoPlot --summary sequencing_summary.txt --loglength -o summary-plots-log-transformed  
+NanoPlot -t 2 --fastq reads1.fastq.gz reads2.fastq.gz --maxlength 40000 --plots dot --legacy hex
+NanoPlot -t 12 --color yellow --bam alignment1.bam alignment2.bam alignment3.bam --downsample 10000 -o bamplots_downsampled
+```
+
+# Assembly the genomes
+
+05_flye.sh
+
+flye --nano-raw /mnt/nanomotif/Sharing/Merged/barcode68/FASTq/ALL_fastq_barcode68.fastq.gz --out-dir . --threads 3 --asm-coverage 50 --genome-size 400m
+
+#modkit pileup /mnt/nanomotif/Sharing/Merged/barcode68/BAM/All_barcode68.bam pileup_barcode68
+.bed
+ #modkit pileup /mnt/nanomotif/Sharing/Merged/barcode68/BAM/All_barcode68.bam pileup_barcode68.bed
+
+```{shell }
+MODCALLS="/home/azureuser/nanomotif/02_Working/Merging/barcode61/ALL_bam61.sorted.bam"
+ASSEMBLY="/home/azureuser/nanomotif/02_Working/barcode61/assembly.fasta"
+MAPPING="/home/azureuser/nanomotif/02_Working/Merging/barcode61/mapping.bam"
+PILEUP="/home/azureuser/nanomotif/02_Working/Merging/barcode61/pileup.bed"
+
+samtools fastq -T MM,ML $MODCALLS | \
+    minimap2 -ax map-ont -y $ASSEMBLY - | \
+    samtools view -bS | \
+    samtools sort -o $MAPPING
+
+modkit pileup --only-tabs $MAPPING $PILEUP
+```
+
+What to do:
+work dir:
+/home/azureuser/nanomotif/02_Working/Merging/
+
+# Call modcall and run nanomotif2
+
+conda activate bam2fastq
+modcall2.sh 
+samtools fastq -T MM,ML /home/azureuser/nanomotif/02_Working/Merging/barcode61/ALL_bam61.sorted.bam | \
+    minimap2 -ax map-ont -y assembly.fasta - | \
+    samtools view -bS - | \
+    samtools sort -o /home/azureuser/nanomotif/02_Working/Merging/barcode61/mapping.bam
+
+samtools index /home/azureuser/nanomotif/02_Working/Merging/barcode61/mapping.bam
+
+modkit pileup --only-tabs /home/azureuser/nanomotif/02_Working/Merging/barcode61/mapping.bam /home/azureuser/nanomotif/02_Working/Merging/barcode61/pileup.bed
+
+# Contig bins
+BINS="."    # Bins directory
+BIN_EXT="fasta"                  # Bins file extension
+OUT="contig_bin.tsv"          # contig-bin output destination
+
+grep ">" ${BINS}/*.${BIN_EXT} | \
+        sed "s/.*\///" | \
+        sed "s/.${BIN_EXT}:>/\t/" | \
+        awk -F'\t' '{print $2 "\t" $1}' > $OUT
+
+For one file:
+BINFILENAME="assembly.fasta"
+BINNAME="bin1"   # or any label you want
+OUT="contig_bin.tsv"
+
+grep ">" "$BINFILENAME" | sed 's/>//' | awk -v bin="$BINNAME" '{print $1 "\t" bin}' > "$OUT"
+
+
+conda activate nanomotif2
+nanomotif motif_discovery /home/azureuser/nanomotif/02_Working/barcode61/assembly.fasta pileup.bed contig_bin.tsv --out test2
+<br>
+<!-- ----------------------- Do not edit above this ----------------------- -->
+
+# Strategy
+
+Extracted DNA was sequenced on an Oxford Nanopore MinION device using a 10.4.1 flowcell and the SQK-RBK114-96 rapid barcoding kit with library preparation modifications according to (1). 
+
+The raw data was basecalled and demultiplexed utilizing an A100 GPU running standalone Dorado (v0.9.1) and the super accuracy basecalling model (dna_r10.4.1_e8.2_400bps_sup@v5.0.0) with detection of the following modifications: 4mC_5mC,6mA.
+
+# NanoPlot QC
+
+
+
+
+# Strategy Isolated and MAGs
+
+Assembly Isolated
+Flye 
+Polishing
+Annotation
+(BV-BRC): a resource combining PATRIC, IRD and ViPR
+
+Methylation pileup (a)
+Nanomotif
+
+Motif Identification
+
+
+# NanoMotif
+
+(a) Reads with methylation calls were mapped to the assembly using minimap2 
+Nanopore’s modkit v0.4.0 (https://github.com/nanoporetech/modkit) was used to generate the methylation pileup from mapped reads using default settings.
+
+
+| ID      | Source     | Strain                                      | Barcode | TaxID  | Contigs | Circular |
+|---------|------------|---------------------------------------------|---------|--------|---------|----------|
+| DNA-29 | DSM 20745  | Sphaerobacter thermophilus                  | EB-61   |        | 2       | No       |
+| DNA-1  | DSM 8691   | Thermoanaerobacterium saccharolyticum       | A9-65   | 111    | 2       | No       |
+| DNA-3  | DSM 11783  | Clostridium perfringens                     | B9-66   | 14     | 2       | No       |
+| DNA-14 | DSM 22069  | Chelatococcus daeguensis                    | C9-67   | Fail   | Fail    |          |
+| DNA-15 | DSM 6008   | Carboxydothermus hydrogenoformans           | D9-68   | 1      | 1       | Yes      |
+| DNA-16 |            | Bacillus subtilis 168 var AC1               | E9-69   |        | 1       | Yes      |
+| DNA-20 |            | Moorella thermoacetica ATCC 39073           | F9-70   | 264732 | 1       | Yes      |
+| DNA-21 | SII 112    | Cupriavidus necator                         | G9-71   | 381666 | 4       | No       |
+| DNA-23 | SII 131    | Paraburkholderia phytoformins (mix)         | H9-72   | 398527 | 78      | No       |
+| DNA-9  | DSM 43792  | Thermobifida fusca                          | A10-73  |        | 31      | No       |
+| DNA-12 | DSM 20566  | Streptococcus pneumoniae                    | B10-74  |        | 1       | Yes      |
+| DNA-13 | DSM 17024  | Saccharophagus degradans                    | C10-75  |        | 2       | No       |
+| DNA-19 | DSM 1279   | Melothermus Ruber                           | D10-76  |        | 2       | No       |
+| DNA-25 | SII 115    | Bacillus subtilis 168                       | E10-77  |        | 1       | Yes      |
+| DNA-26 | SII 122    | Bacillus megatarium                         | F10-78  |        | 1       | Yes      |
+| DNA-27 | SII 123    | Bacillus licheniformis                      | G10-79  |        | 1       | Yes      |
+| DNA-28 | DSM 20117  | Arthrobacter crystallopoietes               | H10-80  |        | 3       | No       |
+```
