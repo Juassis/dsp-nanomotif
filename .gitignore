@@ -1,0 +1,6 @@
+# Ignore macOS system file
+.DS_Store
+
+# Ignore the assets folder inside 01_Documentation
+01_Documentation/assets/
+
