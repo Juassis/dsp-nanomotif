@@ -53,11 +53,16 @@ Nanomotif is a Python package designed to explore methylation in prokaryotic gen
 
 (NanoMotif)[https://nanomotif.readthedocs.io/en/latest/]
 
-## Getting the data
+# Methodos
 
+Extracted DNA was sequenced on an Oxford Nanopore MinION device using a 10.4.1 flowcell and the SQK-RBK114-96 rapid barcoding kit with library preparation modifications according to (1). The raw data was basecalled and demultiplexed utilizing an A100 GPU running standalone Dorado (v0.9.1) and the super accuracy basecalling model (dna_r10.4.1_e8.2_400bps_sup@v5.0.0) with detection of the following modifications: 4mC_5mC,6mA. 
+ 
+## Geting the data
 The data has been generate in two different sequencing: run1 we ran all the samples we had, and some of the sequences did not have a good enough coverage, so we loaded those again, and ran it which is run3 (something was wrong in "run2" and it was terminated early).
 
 ### Data location
+O:\Scientific dep\009_Experimental data\034_Nanopore\Sheila
+
 /mnt/nanomotif/Sharing/Merged
 
 
