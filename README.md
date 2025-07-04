@@ -113,23 +113,4 @@ conda activate nanomotif2
 
 # Results
 
-| ID      | Source     | Strain                                      | Barcode | TaxID  | Contigs | Circular |
-|---------|------------|---------------------------------------------|---------|--------|---------|----------|
-| DNA-29 | DSM 20745  | Sphaerobacter thermophilus                  | EB-61   |        | 2       | No       |
-| DNA-1  | DSM 8691   | Thermoanaerobacterium saccharolyticum       | A9-65   | 111    | 2       | No       |
-| DNA-3  | DSM 11783  | Clostridium perfringens                     | B9-66   | 14     | 2       | No       |
-| DNA-14 | DSM 22069  | Chelatococcus daeguensis                    | C9-67   | Fail   | Fail    |          |
-| DNA-15 | DSM 6008   | Carboxydothermus hydrogenoformans           | D9-68   | 1      | 1       | Yes      |
-| DNA-16 |            | Bacillus subtilis 168 var AC1               | E9-69   |        | 1       | Yes      |
-| DNA-20 |            | Moorella thermoacetica ATCC 39073           | F9-70   | 264732 | 1       | Yes      |
-| DNA-21 | SII 112    | Cupriavidus necator                         | G9-71   | 381666 | 4       | No       |
-| DNA-23 | SII 131    | Paraburkholderia phytoformins (mix)         | H9-72   | 398527 | 78      | No       |
-| DNA-9  | DSM 43792  | Thermobifida fusca                          | A10-73  |        | 31      | No       |
-| DNA-12 | DSM 20566  | Streptococcus pneumoniae                    | B10-74  |        | 1       | Yes      |
-| DNA-13 | DSM 17024  | Saccharophagus degradans                    | C10-75  |        | 2       | No       |
-| DNA-19 | DSM 1279   | Melothermus Ruber                           | D10-76  |        | 2       | No       |
-| DNA-25 | SII 115    | Bacillus subtilis 168                       | E10-77  |        | 1       | Yes      |
-| DNA-26 | SII 122    | Bacillus megatarium                         | F10-78  |        | 1       | Yes      |
-| DNA-27 | SII 123    | Bacillus licheniformis                      | G10-79  |        | 1       | Yes      |
-| DNA-28 | DSM 20117  | Arthrobacter crystallopoietes               | H10-80  |        | 3       | No       |
-```
+Results sent.
